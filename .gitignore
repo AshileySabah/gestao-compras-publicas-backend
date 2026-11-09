@@ -1,0 +1,15 @@
+target/
+.env
+*.log
+
+src/main/resources/static/
+
+.idea/
+*.iml
+.vscode/*
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/extensions.json
+
+.DS_Store
+Thumbs.db
