@@ -12,6 +12,9 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
+import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
 import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 import br.fatec.compraspublicas.dto.ErroResposta;
@@ -37,6 +40,21 @@ public class TratadorDeErros {
 	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
 	public ResponseEntity<ErroResposta> tratarParametroInvalido(MethodArgumentTypeMismatchException excecao) {
 		return responder(HttpStatus.BAD_REQUEST, new ErroResposta(400, "Valor inválido para o parâmetro '" + excecao.getName() + "'."));
+	}
+
+	@ExceptionHandler(ArquivoInvalidoException.class)
+	public ResponseEntity<ErroResposta> tratarArquivoInvalido(ArquivoInvalidoException excecao) {
+		return responder(HttpStatus.BAD_REQUEST, new ErroResposta(400, excecao.getMessage()));
+	}
+
+	@ExceptionHandler({ MissingServletRequestPartException.class, MultipartException.class })
+	public ResponseEntity<ErroResposta> tratarEnvioSemArquivo(Exception excecao) {
+		return responder(HttpStatus.BAD_REQUEST, new ErroResposta(400, "Envie o arquivo ZIP no campo 'arquivo' (formulário multipart)."));
+	}
+
+	@ExceptionHandler(MaxUploadSizeExceededException.class)
+	public ResponseEntity<ErroResposta> tratarArquivoGrandeDemais(MaxUploadSizeExceededException excecao) {
+		return responder(HttpStatus.PAYLOAD_TOO_LARGE, new ErroResposta(413, "O arquivo enviado passa do limite de 50 MB."));
 	}
 
 	@ExceptionHandler(RegraNegocioException.class)
