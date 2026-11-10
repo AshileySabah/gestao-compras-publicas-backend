@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import br.fatec.compraspublicas.dto.ContratacaoRequest;
 import br.fatec.compraspublicas.dto.ContratacaoResponse;
+import br.fatec.compraspublicas.dto.FiltroContratacao;
 import br.fatec.compraspublicas.dto.PaginaResposta;
 import br.fatec.compraspublicas.service.ContratacaoService;
 import jakarta.validation.Valid;
@@ -32,9 +33,9 @@ public class ContratacaoController {
 	}
 
 	@GetMapping
-	public PaginaResposta<ContratacaoResponse> listar(
+	public PaginaResposta<ContratacaoResponse> listar(FiltroContratacao filtro,
 			@PageableDefault(size = 20, sort = "dataAssinatura", direction = Sort.Direction.DESC) Pageable paginacao) {
-		return contratacaoService.listar(paginacao);
+		return contratacaoService.listar(filtro, paginacao);
 	}
 
 	@GetMapping("/{id}")

@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import br.fatec.compraspublicas.dto.ContratacaoRequest;
 import br.fatec.compraspublicas.dto.ContratacaoResponse;
+import br.fatec.compraspublicas.dto.FiltroContratacao;
 import br.fatec.compraspublicas.dto.FornecedorRequest;
 import br.fatec.compraspublicas.dto.OrgaoRequest;
 import br.fatec.compraspublicas.dto.PaginaResposta;
@@ -18,6 +19,7 @@ import br.fatec.compraspublicas.model.Orgao;
 import br.fatec.compraspublicas.model.OrigemRegistro;
 import br.fatec.compraspublicas.model.TipoFornecedor;
 import br.fatec.compraspublicas.repository.ContratacaoRepository;
+import br.fatec.compraspublicas.repository.ContratacaoSpecifications;
 import br.fatec.compraspublicas.repository.FornecedorRepository;
 import br.fatec.compraspublicas.repository.OrgaoRepository;
 
@@ -36,8 +38,19 @@ public class ContratacaoService {
 	}
 
 	@Transactional(readOnly = true)
-	public PaginaResposta<ContratacaoResponse> listar(Pageable paginacao) {
-		return PaginaResposta.de(contratacaoRepository.findAll(paginacao).map(ContratacaoResponse::de));
+	public PaginaResposta<ContratacaoResponse> listar(FiltroContratacao filtro, Pageable paginacao) {
+		validarIntervalos(filtro);
+		return PaginaResposta.de(contratacaoRepository.findAll(ContratacaoSpecifications.comFiltros(filtro), paginacao)
+				.map(ContratacaoResponse::de));
+	}
+
+	private void validarIntervalos(FiltroContratacao filtro) {
+		if (filtro.dataInicio() != null && filtro.dataFim() != null && filtro.dataInicio().isAfter(filtro.dataFim())) {
+			throw new RegraNegocioException("A data inicial do período não pode ser depois da data final.");
+		}
+		if (filtro.valorMinimo() != null && filtro.valorMaximo() != null && filtro.valorMinimo().compareTo(filtro.valorMaximo()) > 0) {
+			throw new RegraNegocioException("O valor mínimo não pode ser maior que o valor máximo.");
+		}
 	}
 
 	@Transactional(readOnly = true)

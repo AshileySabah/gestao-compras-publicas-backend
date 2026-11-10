@@ -8,7 +8,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
-import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -24,10 +24,12 @@ public class TratadorDeErros {
 
 	private static final Logger log = LoggerFactory.getLogger(TratadorDeErros.class);
 
-	@ExceptionHandler(MethodArgumentNotValidException.class)
-	public ResponseEntity<ErroResposta> tratarDadosInvalidos(MethodArgumentNotValidException excecao) {
+	@ExceptionHandler(BindException.class)
+	public ResponseEntity<ErroResposta> tratarDadosInvalidos(BindException excecao) {
 		List<ErroResposta.Campo> campos = excecao.getBindingResult().getFieldErrors().stream()
-				.map(erro -> new ErroResposta.Campo(erro.getField(), erro.getDefaultMessage()))
+				.map(erro -> new ErroResposta.Campo(erro.getField(), erro.isBindingFailure()
+						? "Valor \"" + erro.getRejectedValue() + "\" inválido para " + erro.getField() + "."
+						: erro.getDefaultMessage()))
 				.toList();
 		return responder(HttpStatus.BAD_REQUEST, new ErroResposta(400, "Dados inválidos. Corrija os campos indicados.", campos));
 	}
@@ -54,7 +56,7 @@ public class TratadorDeErros {
 
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	public ResponseEntity<ErroResposta> tratarArquivoGrandeDemais(MaxUploadSizeExceededException excecao) {
-		return responder(HttpStatus.PAYLOAD_TOO_LARGE, new ErroResposta(413, "O arquivo enviado passa do limite de 50 MB."));
+		return responder(HttpStatus.CONTENT_TOO_LARGE, new ErroResposta(413, "O arquivo enviado passa do limite de 50 MB."));
 	}
 
 	@ExceptionHandler(RegraNegocioException.class)
