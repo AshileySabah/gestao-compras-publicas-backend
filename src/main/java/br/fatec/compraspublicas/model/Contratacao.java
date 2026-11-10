@@ -11,6 +11,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.SequenceGenerator;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -21,7 +22,8 @@ import jakarta.persistence.UniqueConstraint;
 public class Contratacao {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "contratacao_seq")
+	@SequenceGenerator(name = "contratacao_seq", sequenceName = "contratacao_seq", allocationSize = 50)
 	private Long id;
 
 	@Column(name = "numero_contrato", nullable = false, length = 30)
