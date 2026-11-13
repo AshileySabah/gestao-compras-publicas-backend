@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.BindException;
+import org.springframework.web.HttpMediaTypeNotSupportedException;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
@@ -52,6 +54,17 @@ public class TratadorDeErros {
 	@ExceptionHandler({ MissingServletRequestPartException.class, MultipartException.class })
 	public ResponseEntity<ErroResposta> tratarEnvioSemArquivo(Exception excecao) {
 		return responder(HttpStatus.BAD_REQUEST, new ErroResposta(400, "Envie o arquivo ZIP no campo 'arquivo' (formulário multipart)."));
+	}
+
+	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
+	public ResponseEntity<ErroResposta> tratarFormatoNaoSuportado(HttpMediaTypeNotSupportedException excecao) {
+		return responder(HttpStatus.UNSUPPORTED_MEDIA_TYPE, new ErroResposta(415,
+				"Formato de envio não suportado. Contratações são enviadas em JSON e a importação em multipart, no campo 'arquivo'."));
+	}
+
+	@ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+	public ResponseEntity<ErroResposta> tratarMetodoNaoSuportado(HttpRequestMethodNotSupportedException excecao) {
+		return responder(HttpStatus.METHOD_NOT_ALLOWED, new ErroResposta(405, "Método " + excecao.getMethod() + " não é aceito neste endereço."));
 	}
 
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
