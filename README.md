@@ -455,4 +455,4 @@ Todos os erros seguem o mesmo formato, com mensagens em português:
 
 O projeto não tem testes automatizados. As regras são verificadas pela importação real do ZIP original de junho, que precisa produzir o resultado esperado descrito em "Como os dados chegam" (1.749 lidas, 1.727 importadas, 22 rejeitadas), e pela reimportação do mesmo arquivo, que precisa resultar em 0 importadas.
 
-Para a apresentação, existem arquivos de demonstração com casos de dados inválidos, ausentes, duplicados e incompatíveis, e arquivos inválidos. Os ZIPs foram obtidos em https://portaldatransparencia.gov.br/download-de-dados/compras e ficam apenas na máquina local, fora do repositório.
+Para a apresentação, existem arquivos de demonstração com casos de dados inválidos, ausentes, duplicados e incompatíveis, e arquivos inválidos. Parte deles é oficial, baixada do Portal da Transparência (https://portaldatransparencia.gov.br/download-de-dados); outra parte foi criada a partir de uma cópia do arquivo de junho, só para demonstrar regras que os arquivos oficiais não exercitam. Todos ficam fora do repositório.
