@@ -60,30 +60,20 @@ As tabelas são criadas automaticamente na primeira execução.
 
 ## Como executar
 
-Pré-requisitos: JDK 17 ou mais recente e o `.env` configurado. Para o front, também o Node.js.
+Pré-requisitos: JDK 17 ou mais recente para o back, Node.js 20.19.0 ou maior para o front e o `.env` de cada repositório criado a partir do `.env.example`. As variáveis do banco estão explicadas no README do back-end; no front, `API_URL` é o endereço do back.
 
-**Só a API**
+Os dois repositórios têm o mesmo script `dev.sh`, executado na raiz do repositório:
 
-```
-.\mvnw.cmd spring-boot:run
-```
+| Caso                                                    | Comando        | Endereço                    |
+| ------------------------------------------------------- | -------------- | --------------------------- |
+| Back com os dados do banco                              | `./dev.sh -BD` | `http://localhost:8080/api` |
+| Back zerado (apaga tabelas e dados e recria tudo vazio) | `./dev.sh -BZ` | `http://localhost:8080/api` |
+| Front em desenvolvimento (com o back já rodando)        | `./dev.sh -F`  | `http://localhost:5173`     |
+| Front e back juntos                                     | `./dev.sh -FB` | `http://localhost:8080`     |
 
-No Linux ou macOS, use `./mvnw spring-boot:run`. A API fica em `http://localhost:8080/api`.
+Os comandos são para o Git Bash, Linux ou macOS. No PowerShell ou no cmd, use `.\dev.cmd` com a mesma flag (ex.: `.\dev.cmd -BZ`).
 
-**Aplicação completa (front + back com um comando)**
-
-Com os dois repositórios em pastas lado a lado, gere o front dentro do back e suba o back:
-
-```
-cd gestao-compras-publicas-frontend
-npm install
-npm run build:backend
-
-cd ../gestao-compras-publicas-backend
-.\mvnw.cmd spring-boot:run
-```
-
-Acesse `http://localhost:8080`. Para desenvolver o front separadamente, veja o README do front-end.
+Para subir só o repositório em que você está (`-BD` e `-BZ` no back, `-F` no front), não é preciso ter o outro clonado. Nos demais casos, inclusive `-FB`, os dois repositórios precisam estar clonados na mesma pasta, e o comando pode ser executado em qualquer um deles.
 
 ## Como usar
 
